@@ -74,16 +74,22 @@ class GameController {
   }
 
   startGame() {
-    window.soundEngine.select();
-    document.getElementById('screen-landing').classList.add('hidden');
-    document.getElementById('screen-story-intro').classList.remove('hidden');
+    try { window.soundEngine?.select?.(); } catch (e) {}
+    const landing = document.getElementById('screen-landing');
+    const story = document.getElementById('screen-story-intro');
+    if (landing) landing.classList.add('hidden');
+    if (story) story.classList.remove('hidden');
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
   }
 
   beginLevel1() {
-    window.soundEngine.select();
-    document.getElementById('screen-story-intro').classList.add('hidden');
-    document.getElementById('screen-gameplay').classList.remove('hidden');
+    try { window.soundEngine?.select?.(); } catch (e) {}
+    const story = document.getElementById('screen-story-intro');
+    const gameplay = document.getElementById('screen-gameplay');
+    if (story) story.classList.add('hidden');
+    if (gameplay) gameplay.classList.remove('hidden');
     this.loadLevel(this.currentLevelIndex);
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
   }
 
   loadLevel(index) {
@@ -517,6 +523,40 @@ class GameController {
 
 window.GameController = GameController;
 
-document.addEventListener('DOMContentLoaded', () => {
-  window.game = new GameController();
-});
+window.startGame = function() {
+  if (window.game) {
+    window.game.startGame();
+  } else {
+    document.getElementById('screen-landing')?.classList.add('hidden');
+    document.getElementById('screen-story-intro')?.classList.remove('hidden');
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+  }
+};
+
+window.beginLevel1 = function() {
+  if (window.game) {
+    window.game.beginLevel1();
+  } else {
+    document.getElementById('screen-story-intro')?.classList.add('hidden');
+    document.getElementById('screen-gameplay')?.classList.remove('hidden');
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+  }
+};
+
+function initRideQuest() {
+  if (!window.game) {
+    try {
+      window.game = new GameController();
+      console.log('RideQuest Engine initialized successfully!');
+    } catch (e) {
+      console.error('Failed to initialize GameController:', e);
+    }
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initRideQuest);
+} else {
+  initRideQuest();
+}
+
