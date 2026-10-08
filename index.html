@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RideQuest – Become the Architect | Interactive System Design Game</title>
+  <meta name="description" content="An interactive educational game teaching System Design to first-year computer science students through real-life ride-hailing problems.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚖</text></svg>">
+</head>
+<body>
+
+  <!-- APP HEADER -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="brand-logo-icon">🚖</div>
+      <div>
+        <h1 class="brand-title">RIDEQUEST</h1>
+        <div class="brand-subtitle">Become the Architect</div>
+      </div>
+    </div>
+
+    <nav class="nav-actions">
+      <button class="header-btn" id="btn-codex" onclick="window.game.toggleCodex()">
+        📖 Architect Codex
+      </button>
+      <button class="header-btn teacher-mode-btn" id="btn-teacher-mode" onclick="window.game.toggleTeacherMode()">
+        🎓 Teacher Mode
+      </button>
+      <button class="header-btn" id="btn-sound-toggle" onclick="window.game.toggleSound()">
+        🔊 Sound On
+      </button>
+      <button class="header-btn" id="btn-reset" onclick="window.game.resetProgress()" title="Restart from Level 1">
+        🔄 Reset
+      </button>
+    </nav>
+  </header>
+
+  <!-- GLOBAL PROGRESS BAR -->
+  <div class="global-progress-bar">
+    <div class="progress-fill" id="progress-bar-fill"></div>
+  </div>
+
+  <main class="main-content">
+
+    <!-- SCREEN 1: LANDING START SCREEN -->
+    <section class="screen-wrapper" id="screen-landing">
+      <div class="landing-hero">
+        <div class="hero-pill">✨ System Design for Beginners • Zero Technical Jargon Needed</div>
+        <h1 class="hero-title">RIDEQUEST</h1>
+        <p class="hero-subtitle">
+          “You don't need to know System Design. Just solve the problems.”
+        </p>
+        <button class="hero-cta-btn" id="btn-start-journey" onclick="window.game.startGame()">
+          START YOUR JOURNEY ➔
+        </button>
+
+        <div class="feature-cards-row">
+          <div class="feature-mini-card">
+            <div class="feat-icon">🏙️</div>
+            <div class="feat-title">Real City Challenges</div>
+            <div class="feat-desc">From 100 passengers to 10 million users across 50 cities. Rush hours, storms, and server surges!</div>
+          </div>
+          <div class="feature-mini-card">
+            <div class="feat-icon">🧩</div>
+            <div class="feat-title">Think First, Discover Later</div>
+            <div class="feat-desc">Make decisions using everyday common sense. Discover the real computer science concepts AFTER seeing the consequences.</div>
+          </div>
+          <div class="feature-mini-card">
+            <div class="feat-icon">🎮</div>
+            <div class="feat-title">Visual Simulations</div>
+            <div class="feat-desc">Interactive live server racks, animated delivery pipelines, traffic queues, and database replicas.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: STORY INTRODUCTION -->
+    <section class="screen-wrapper hidden" id="screen-story-intro">
+      <div class="story-container">
+        <div class="story-header">
+          <div class="story-avatar">👨‍💻</div>
+          <div>
+            <div class="story-badge">Mission Briefing</div>
+            <div class="story-title">Welcome to RideQuest HQ</div>
+          </div>
+        </div>
+
+        <div class="story-body">
+          <p>You have been hired as the <strong>Technology Architect of RideQuest</strong>.</p>
+          <div class="story-quote">
+            “Your users don't care how the system works.<br>
+            They only care that the app works.”
+          </div>
+          <p>
+            RideQuest is growing rapidly from:
+            <br>
+            <strong>100 users ➔ 1,000 ➔ 10,000 ➔ 100,000 ➔ 1 million ➔ 10 million users</strong>.
+          </p>
+          <p>
+            Your job is to keep RideQuest <strong>Fast, Reliable, Available, Secure, and Scalable</strong>.
+            Your decisions will determine whether RideQuest survives.
+          </p>
+        </div>
+
+        <button class="story-btn-begin" id="btn-begin-game" onclick="window.game.beginLevel1()">
+          BEGIN LEVEL 1 ➔
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: ACTIVE GAMEPLAY -->
+    <section class="screen-wrapper hidden" id="screen-gameplay">
+      <div class="gameplay-layout">
+        
+        <!-- Status Bar -->
+        <div class="gameplay-status-bar">
+          <div class="status-left">
+            <span class="stage-pill" id="stage-badge-text">Stage 1: Make The App Work</span>
+            <span class="level-pill" id="level-indicator-text">Level 1 of 24</span>
+          </div>
+          <div class="status-right">
+            <span class="xp-badge" id="xp-display">0 XP</span>
+          </div>
+        </div>
+
+        <!-- STANDARD LEVEL VIEW (Levels 1 to 24) -->
+        <div id="level-standard-view">
+          <div class="level-split-grid">
+            
+            <!-- LEFT: SIMULATION VIEWPORT -->
+            <div class="sim-viewport-card" id="sim-viewport">
+              <!-- Live interactive simulation is dynamically rendered here -->
+            </div>
+
+            <!-- RIGHT: SITUATION, PROBLEM & CHOICES -->
+            <div class="problem-card">
+              <div class="time-header">
+                <span class="time-tag">⏰ <span id="lvl-time">6:00 PM Rush Hour</span></span>
+                <span class="users-tag">👥 <span id="lvl-users">50,000 users</span></span>
+              </div>
+
+              <h2 class="problem-title" id="lvl-title">Too Many People Arrive</h2>
+
+              <div class="situation-bubble" id="lvl-situation">
+                Loading scenario...
+              </div>
+
+              <div class="problem-callout" id="lvl-problem"></div>
+
+              <div class="question-prompt">
+                What would you do?
+              </div>
+
+              <div class="options-container" id="options-grid">
+                <!-- Choice buttons injected dynamically -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- FINAL BOSS VIEW (Level 25) -->
+        <div id="level-boss-view" class="hidden">
+          <div id="boss-canvas-container">
+            <!-- Full boss canvas rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DISCOVERY MODAL (Reveals after a decision) -->
+    <div class="discovery-modal-backdrop hidden" id="discovery-modal">
+      <div class="discovery-dialog">
+        <div class="disc-celebration">
+          <span>🎉</span> <span>You just discovered a System Design concept!</span>
+        </div>
+
+        <h2 class="disc-badge-title" id="disc-badge-title">Horizontal Scaling</h2>
+        <div class="disc-tagline" id="disc-tagline">Instead of depending on one powerful machine, we add more machines and share the work.</div>
+
+        <div class="disc-analogy-box">
+          <div class="analogy-label">💡 Real-Life Analogy</div>
+          <div class="analogy-text" id="disc-analogy">
+            Instead of hiring one superhero delivery driver who gets exhausted, you hire 5 normal delivery vans that deliver across the city together.
+          </div>
+        </div>
+
+        <div class="disc-contrast-grid">
+          <div class="contrast-card">
+            <div class="contrast-title" id="disc-contrast-a-title">Vertical Scaling</div>
+            <div class="contrast-desc" id="disc-contrast-a-desc">One BIG server. Hits hardware limits quickly.</div>
+          </div>
+          <div class="contrast-card glow-green">
+            <div class="contrast-title" id="disc-contrast-b-title">Horizontal Scaling</div>
+            <div class="contrast-desc" id="disc-contrast-b-desc">Many servers working together smoothly.</div>
+          </div>
+        </div>
+
+        <button class="advanced-toggle-btn" id="btn-advanced-toggle" onclick="window.game.toggleAdvancedInfo()">
+          🔬 Show Advanced Tech Explanation
+        </button>
+
+        <div class="advanced-card hidden" id="advanced-panel">
+          <div id="disc-advanced-text">Advanced notes...</div>
+        </div>
+
+        <div class="disc-footer">
+          <button class="btn-next-level" id="btn-next-level" onclick="window.game.nextLevel()">
+            NEXT CHALLENGE ➔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEACHER MODE DRAWER -->
+    <aside class="hidden" id="teacher-drawer">
+      <div class="drawer-backdrop" onclick="window.game.toggleTeacherMode()"></div>
+      <div class="teacher-drawer-content">
+        <div class="drawer-header">
+          <div class="drawer-title">🎓 Teacher Control Mode</div>
+          <button class="close-drawer-btn" onclick="window.game.toggleTeacherMode()">✕</button>
+        </div>
+
+        <div class="teacher-section">
+          <label class="t-label">Classroom Level Jump</label>
+          <select class="t-select" id="teach-jump-select"></select>
+        </div>
+
+        <div class="teacher-section">
+          <span class="t-label">Current Level</span>
+          <div class="t-val" id="teach-level-title">Level 1: Too Many People Arrive</div>
+        </div>
+
+        <div class="teacher-section">
+          <span class="t-label">Concept Being Discovered</span>
+          <div class="t-val text-cyan" id="teach-concept-revealed">Horizontal Scaling</div>
+        </div>
+
+        <div class="teacher-section">
+          <span class="t-label">Student Decision Telemetry</span>
+          <div class="t-val" id="teach-student-choice">Waiting for student decision...</div>
+        </div>
+
+        <div class="teacher-section">
+          <span class="t-label">What Students Just Experienced</span>
+          <div class="t-val" id="teach-experience">Students felt the crushing weight of traffic spikes...</div>
+        </div>
+
+        <div class="teacher-section">
+          <span class="t-label">Real-World RideQuest Example</span>
+          <div class="t-val" id="teach-realworld">Uber/Ola spin up auto-scaling containers...</div>
+        </div>
+
+        <div class="teacher-section">
+          <span class="t-label">Question The Teacher Can Ask Next</span>
+          <div class="t-val text-warning" id="teach-question">Can we just add infinite computers?</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ARCHITECT CODEX NOTEBOOK DRAWER -->
+    <aside class="hidden" id="codex-drawer">
+      <div class="drawer-backdrop" onclick="window.game.toggleCodex()"></div>
+      <div class="codex-drawer-content">
+        <div class="drawer-header">
+          <div class="drawer-title">📖 Architect Field Notebook</div>
+          <button class="close-drawer-btn" onclick="window.game.toggleCodex()">✕</button>
+        </div>
+        <p class="text-muted" style="font-size: 0.85rem;">Review all system design discoveries and analogies unlocked during your journey.</p>
+        <div class="codex-list" id="codex-list"></div>
+      </div>
+    </aside>
+
+    <!-- SCREEN 4: GRAND VICTORY SCREEN -->
+    <section class="screen-wrapper hidden" id="screen-victory">
+      <div class="victory-hero">
+        <div class="victory-crown">👑</div>
+        <h1 class="victory-title">🎉 YOU ARE NOW A SYSTEM ARCHITECT</h1>
+        
+        <p class="victory-quote">
+          “You didn't memorize System Design.<br>
+          You experienced why every concept exists.”
+        </p>
+
+        <div class="concepts-cloud">
+          <span class="concept-chip glow-cyan">Scalability</span>
+          <span class="concept-chip glow-cyan">Load Balancing</span>
+          <span class="concept-chip glow-cyan">CAP Theorem</span>
+          <span class="concept-chip glow-cyan">ACID / BASE</span>
+          <span class="concept-chip glow-cyan">Caching (LRU/LFU)</span>
+          <span class="concept-chip glow-cyan">Database Design</span>
+          <span class="concept-chip glow-cyan">Sharding</span>
+          <span class="concept-chip glow-cyan">Replication</span>
+          <span class="concept-chip glow-cyan">Indexing</span>
+          <span class="concept-chip glow-cyan">Distributed Systems</span>
+          <span class="concept-chip glow-cyan">Distributed Transactions</span>
+          <span class="concept-chip glow-cyan">Fault Tolerance</span>
+          <span class="concept-chip glow-cyan">Time & Clocks</span>
+          <span class="concept-chip glow-cyan">APIs (REST / gRPC)</span>
+          <span class="concept-chip glow-cyan">Rate Limiting</span>
+          <span class="concept-chip glow-cyan">Networking (WebSockets)</span>
+          <span class="concept-chip glow-cyan">Message Queues (Kafka)</span>
+          <span class="concept-chip glow-cyan">Stream Processing</span>
+          <span class="concept-chip glow-cyan">Full-Text Search</span>
+          <span class="concept-chip glow-cyan">Data Warehousing</span>
+          <span class="concept-chip glow-cyan">CDN Edge Caching</span>
+          <span class="concept-chip glow-cyan">Recommendations</span>
+          <span class="concept-chip glow-cyan">Observability (Tracing)</span>
+          <span class="concept-chip glow-cyan">Authentication & RBAC</span>
+          <span class="concept-chip glow-cyan">Microservices & Containers</span>
+        </div>
+
+        <button class="hero-cta-btn" onclick="window.location.reload()">
+          PLAY AGAIN OR REVISIT BLUEPRINT
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Core Scripts -->
+  <script src="sound.js"></script>
+  <script src="levels-data.js"></script>
+  <script src="simulation.js"></script>
+  <script src="boss-canvas.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
