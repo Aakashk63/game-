@@ -114,17 +114,75 @@ class GameController {
 
   updateTopBar(level) {
     const stage = window.GAME_STAGES.find(s => s.id === level.stage);
-    this.setElementText('stage-badge-text', stage ? stage.name : 'System Design');
-    this.setElementText('level-indicator-text', level.isBoss ? 'Final Boss Challenge' : `Level ${level.id} of 24`);
-    this.setElementText('xp-display', `${this.xp} XP`);
+    this.setElementText('stage-badge-text', stage ? stage.name.toUpperCase() : 'SYSTEM DESIGN');
+    this.setElementText('level-indicator-text', level.isBoss ? 'FINAL BOSS' : `Level ${level.id} / 24`);
+    this.setElementText('xp-count-val', `${this.xp}`);
+
+    // Stepper dots for the current stage
+    const stepperContainer = document.getElementById('stage-stepper-dots');
+    if (stepperContainer && stage) {
+      stepperContainer.innerHTML = stage.levels.map((lvlId, idx) => {
+        const isDone = this.completedLevelIds.has(lvlId);
+        const isCurrent = lvlId === level.id;
+        const dotClass = isCurrent ? 'dot current' : (isDone ? 'dot done' : 'dot pending');
+        const connector = idx < stage.levels.length - 1 ? `<div class="dot-connector ${isDone ? 'active' : ''}"></div>` : '';
+        return `<div class="${dotClass}" title="Level ${lvlId}"></div>${connector}`;
+      }).join('');
+    }
+
+    // Non-jargon challenge topic pill
+    this.setElementText('challenge-topic-text', `🎯 Challenge: ${level.topicHint || level.title}`);
+
     const progressFill = document.getElementById('progress-bar-fill');
     if (progressFill) progressFill.style.width = `${((level.id) / 25) * 100}%`;
   }
 
+  updateCompanionState(state, dialogue) {
+    const faceEl = document.getElementById('avatar-face');
+    const textEl = document.getElementById('companion-text');
+    const compCard = document.getElementById('architect-companion');
+
+    if (compCard) {
+      compCard.classList.remove('state-thinking', 'state-observing', 'state-curious', 'state-celebrating');
+      compCard.classList.add(`state-${state}`);
+    }
+
+    if (faceEl) {
+      switch (state) {
+        case 'thinking':
+          faceEl.innerText = '🧐';
+          break;
+        case 'observing':
+          faceEl.innerText = '👀';
+          break;
+        case 'curious':
+          faceEl.innerText = '🤔';
+          break;
+        case 'celebrating':
+          faceEl.innerText = '🎉';
+          break;
+        default:
+          faceEl.innerText = '🧐';
+      }
+    }
+
+    if (textEl && dialogue) {
+      textEl.innerText = dialogue;
+    }
+  }
+
   renderLevelView(level) {
-    // Hide discovery modal if open
+    // Hide all overlays and feedback banners
     const modal = document.getElementById('discovery-modal');
     if (modal) modal.classList.add('hidden');
+    const consCard = document.getElementById('consequence-feedback-card');
+    if (consCard) consCard.classList.add('hidden');
+    const succBanner = document.getElementById('success-feedback-banner');
+    if (succBanner) succBanner.classList.add('hidden');
+    const whModal = document.getElementById('what-happened-modal');
+    if (whModal) whModal.classList.add('hidden');
+
+    this.isEvaluating = false;
 
     // Fill Situation card
     this.setElementText('lvl-time', level.time);
@@ -132,6 +190,9 @@ class GameController {
     this.setElementText('lvl-title', level.title);
     this.setElementText('lvl-situation', level.situation);
     this.setElementText('lvl-problem', level.problem);
+
+    // Initial character prompt
+    this.updateCompanionState('thinking', `“Review the situation carefully. What strategy should we deploy?”`);
 
     // Render Options
     const optionsContainer = document.getElementById('options-grid');
@@ -145,7 +206,7 @@ class GameController {
         btn.innerHTML = `
           <div class="choice-letter">Option ${choice.id}</div>
           <div class="choice-text">"${choice.text}"</div>
-          <div class="choice-action">Select this solution ➔</div>
+          <div class="choice-action">Test this solution ➔</div>
         `;
         btn.onclick = () => this.makeChoice(choice);
         optionsContainer.appendChild(btn);
@@ -158,12 +219,27 @@ class GameController {
     }
   }
 
+  setChoicesDisabled(disabled) {
+    const allCards = document.querySelectorAll('.choice-card');
+    allCards.forEach(c => {
+      if (disabled) {
+        c.classList.add('disabled');
+      } else {
+        c.classList.remove('disabled');
+      }
+    });
+  }
+
   makeChoice(choice) {
+    if (this.isEvaluating) return;
+    this.isEvaluating = true;
     window.soundEngine.click();
     this.selectedChoice = choice;
     const level = window.GAME_LEVELS[this.currentLevelIndex];
 
-    // Highlight selected card
+    // Lock choices and highlight
+    this.setChoicesDisabled(true);
+
     const allCards = document.querySelectorAll('.choice-card');
     allCards.forEach(c => c.classList.remove('selected', 'optimal', 'suboptimal'));
 
@@ -177,22 +253,105 @@ class GameController {
       }
     }
 
-    // Play feedback sound and animate simulation consequence
-    if (choice.isOptimal) {
-      window.soundEngine.success();
-    } else {
-      window.soundEngine.overload();
-    }
+    // Story companion observes
+    this.updateCompanionState('observing', `“Testing Option ${choice.id}... Let's observe what happens!”`);
 
+    // Render simulation consequence
     if (this.simulationEngine) {
       this.simulationEngine.render(level, choice);
     }
     this.updateTeacherMode();
 
-    // Show Consequence Panel
-    setTimeout(() => {
-      this.showDiscoveryModal(level, choice);
-    }, 1200);
+    if (!choice.isOptimal) {
+      // --- SUBOPTIMAL / WRONG ANSWER FLOW ---
+      setTimeout(() => {
+        window.soundEngine.overload();
+        this.updateCompanionState('curious', `“Hmm... look at what happened! Something else is slowing the system down.”`);
+        this.showConsequenceCard(level, choice);
+        this.isEvaluating = false;
+      }, 1200);
+    } else {
+      // --- OPTIMAL / CORRECT ANSWER FLOW ---
+      setTimeout(() => {
+        window.soundEngine.success();
+        this.updateCompanionState('celebrating', `“Brilliant! Look what changed! The system is running smoothly!”`);
+        this.showSuccessBanner(level, choice);
+
+        setTimeout(() => {
+          this.showDiscoveryModal(level, choice);
+          this.isEvaluating = false;
+        }, 1600);
+      }, 1200);
+    }
+  }
+
+  showConsequenceCard(level, choice) {
+    const card = document.getElementById('consequence-feedback-card');
+    if (card) {
+      card.classList.remove('hidden');
+      const wh = choice.whatHappened || {};
+      this.setElementText('consequence-title', "Interesting choice! Let's see what happened...");
+      this.setElementText('consequence-body', wh.reflectionQuestion || "Did this decision solve the whole system bottleneck?");
+    }
+  }
+
+  hideConsequenceCard() {
+    const card = document.getElementById('consequence-feedback-card');
+    if (card) card.classList.add('hidden');
+  }
+
+  showSuccessBanner(level, choice) {
+    const banner = document.getElementById('success-feedback-banner');
+    if (banner) {
+      banner.classList.remove('hidden');
+      this.setElementText('success-desc-text', choice.successSummary || "The workload is flowing smoothly across the system without bottlenecks!");
+    }
+  }
+
+  hideSuccessBanner() {
+    const banner = document.getElementById('success-feedback-banner');
+    if (banner) banner.classList.add('hidden');
+  }
+
+  retryLevel() {
+    window.soundEngine.click();
+    this.hideConsequenceCard();
+    this.hideWhatHappenedModal();
+    this.setChoicesDisabled(false);
+
+    const allCards = document.querySelectorAll('.choice-card');
+    allCards.forEach(c => c.classList.remove('selected', 'optimal', 'suboptimal', 'disabled'));
+
+    this.selectedChoice = null;
+    this.isEvaluating = false;
+
+    const level = window.GAME_LEVELS[this.currentLevelIndex];
+    this.updateCompanionState('thinking', `“Let's rethink our approach. Which solution should we test next?”`);
+
+    // Reset simulation to clean problem state
+    if (this.simulationEngine) {
+      this.simulationEngine.render(level, null);
+    }
+  }
+
+  showWhatHappened() {
+    window.soundEngine.click();
+    const modal = document.getElementById('what-happened-modal');
+    const choice = this.selectedChoice;
+    if (modal && choice) {
+      modal.classList.remove('hidden');
+      this.setElementText('wh-choice-echo', `You tested Option ${choice.id}: "${choice.text}"`);
+
+      const wh = choice.whatHappened || {};
+      this.setElementText('wh-helped-text', wh.helped || "This took action on the immediate situation.");
+      this.setElementText('wh-bottleneck-text', wh.bottleneck || choice.consequenceText);
+      this.setElementText('wh-reflection-prompt', `💡 Architect's Reflection: ${wh.reflectionQuestion || "Did this approach solve the underlying system bottleneck?"}`);
+    }
+  }
+
+  hideWhatHappenedModal() {
+    const modal = document.getElementById('what-happened-modal');
+    if (modal) modal.classList.add('hidden');
   }
 
   showDiscoveryModal(level, choice) {
@@ -220,25 +379,29 @@ class GameController {
       this.xp += 150;
       this.updateTopBar(level);
       this.saveState();
+      this.animateXpGain();
     }
   }
 
-  toggleAdvancedInfo() {
-    const panel = document.getElementById('advanced-panel');
-    const btn = document.getElementById('btn-advanced-toggle');
-    window.soundEngine.click();
-    if (panel.classList.contains('hidden')) {
-      panel.classList.remove('hidden');
-      btn.innerText = "🔼 Hide Advanced Tech Explanation";
-    } else {
-      panel.classList.add('hidden');
-      btn.innerText = "🔬 Show Advanced Tech Explanation";
+  animateXpGain() {
+    const xpBadge = document.getElementById('xp-display');
+    if (xpBadge) {
+      xpBadge.classList.add('pulse-glow');
+      setTimeout(() => xpBadge.classList.remove('pulse-glow'), 2000);
     }
   }
 
   nextLevel() {
     window.soundEngine.select();
-    document.getElementById('discovery-modal').classList.add('hidden');
+    const modal = document.getElementById('discovery-modal');
+    if (modal) modal.classList.add('hidden');
+    this.hideConsequenceCard();
+    this.hideSuccessBanner();
+    this.hideWhatHappenedModal();
+    this.setChoicesDisabled(false);
+    this.selectedChoice = null;
+    this.isEvaluating = false;
+
     this.loadLevel(this.currentLevelIndex + 1);
   }
 

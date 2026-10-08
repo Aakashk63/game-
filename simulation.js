@@ -116,37 +116,87 @@ class SimulationEngine {
     if (!choice) {
       serverHtml = `
         <div class="sim-server overheated pulse-danger" id="server-single">
-          <div class="server-icon">🖥️</div>
-          <div class="server-title">Single Main Computer</div>
-          <div class="server-bar"><div class="server-fill" style="width: 98%;"></div></div>
-          <div class="server-status text-danger">⚠️ CPU 99% - CRITICAL OVERLOAD</div>
-          <div class="smoke-particle">💨</div>
+          <div class="server-rack-top">
+            <span class="rack-light red"></span>
+            <span class="rack-light yellow blink"></span>
+            <span class="rack-label">Single Main Host #01</span>
+          </div>
+          <div class="server-icon-large">🖥️</div>
+          <div class="server-title">Single Machine Architecture</div>
+          <div class="server-bar"><div class="server-fill fill-danger" style="width: 98%;"></div></div>
+          <div class="server-status text-danger font-mono">⚠️ CPU: 99% • TEMP: 98°C • MEM: 97%</div>
+          <div class="smoke-particles-container">
+            <span class="smoke-p s1">💨</span>
+            <span class="smoke-p s2">💨</span>
+          </div>
+          <div class="bottleneck-tag text-danger">🛑 Single Point of Failure</div>
         </div>
       `;
     } else if (isHorizontal) {
       serverHtml = `
-        <div class="sim-servers-grid">
-          <div class="sim-server healthy"><div class="server-icon">🖥️</div><div>Server 1</div><div class="server-bar"><div class="server-fill" style="width: 25%;"></div></div><div class="text-success">Load: 25%</div></div>
-          <div class="sim-server healthy"><div class="server-icon">🖥️</div><div>Server 2</div><div class="server-bar"><div class="server-fill" style="width: 28%;"></div></div><div class="text-success">Load: 28%</div></div>
-          <div class="sim-server healthy"><div class="server-icon">🖥️</div><div>Server 3</div><div class="server-bar"><div class="server-fill" style="width: 24%;"></div></div><div class="text-success">Load: 24%</div></div>
-          <div class="sim-server healthy"><div class="server-icon">🖥️</div><div>Server 4</div><div class="server-bar"><div class="server-fill" style="width: 22%;"></div></div><div class="text-success">Load: 22%</div></div>
+        <div class="horizontal-cluster-box glow-green">
+          <div class="cluster-header">
+            <span class="cluster-badge">✓ Distributed Cluster (4 Nodes Active)</span>
+            <span class="cluster-load text-success">Total Traffic: 50,000 req/s Distributed</span>
+          </div>
+          <div class="sim-servers-grid">
+            <div class="sim-server healthy">
+              <div class="server-rack-top"><span class="rack-light green"></span><span>Node 01</span></div>
+              <div class="server-icon">🖥️</div>
+              <div class="server-bar"><div class="server-fill fill-success" style="width: 25%;"></div></div>
+              <div class="text-success font-mono">CPU: 25% • 36°C</div>
+            </div>
+            <div class="sim-server healthy">
+              <div class="server-rack-top"><span class="rack-light green"></span><span>Node 02</span></div>
+              <div class="server-icon">🖥️</div>
+              <div class="server-bar"><div class="server-fill fill-success" style="width: 28%;"></div></div>
+              <div class="text-success font-mono">CPU: 28% • 37°C</div>
+            </div>
+            <div class="sim-server healthy">
+              <div class="server-rack-top"><span class="rack-light green"></span><span>Node 03</span></div>
+              <div class="server-icon">🖥️</div>
+              <div class="server-bar"><div class="server-fill fill-success" style="width: 24%;"></div></div>
+              <div class="text-success font-mono">CPU: 24% • 36°C</div>
+            </div>
+            <div class="sim-server healthy">
+              <div class="server-rack-top"><span class="rack-light green"></span><span>Node 04</span></div>
+              <div class="server-icon">🖥️</div>
+              <div class="server-bar"><div class="server-fill fill-success" style="width: 22%;"></div></div>
+              <div class="text-success font-mono">CPU: 22% • 35°C</div>
+            </div>
+          </div>
+          <div class="cluster-footer text-success">
+            ✨ Workload split smoothly! If any single server trips, 3 servers keep the city running!
+          </div>
         </div>
       `;
     } else if (isVertical) {
       serverHtml = `
-        <div class="sim-server giant overheated">
-          <div class="server-icon">🏢</div>
-          <div class="server-title">Titan Super-Server ($$$$)</div>
-          <div class="server-bar"><div class="server-fill" style="width: 89%;"></div></div>
-          <div class="server-status text-warning">Load: 89% (Extremely Expensive, Still Nearing Limit!)</div>
+        <div class="sim-server giant overheated pulse-danger">
+          <div class="server-rack-top">
+            <span class="rack-light red blink"></span>
+            <span class="rack-label">Titan Super-Server ($25,000 / mo)</span>
+          </div>
+          <div class="server-icon-large">🏢</div>
+          <div class="server-title">One Giant Super-Machine</div>
+          <div class="server-bar"><div class="server-fill fill-danger" style="width: 95%;"></div></div>
+          <div class="server-status text-danger font-mono">⚠️ CPU: 95% • Still Overheated Under 100k Peak</div>
+          <div class="smoke-particles-container">
+            <span class="smoke-p s1">💨</span>
+            <span class="smoke-p s2">🔥</span>
+          </div>
+          <div class="bottleneck-tag text-warning">
+            ⚠️ Physical limit reached! Single power trip drops all rides.
+          </div>
         </div>
       `;
     } else {
       serverHtml = `
         <div class="sim-server offline">
-          <div class="server-icon">❌</div>
-          <div class="server-title">Service Closed</div>
-          <div class="server-status text-danger">Users Abandoned RideQuest</div>
+          <div class="server-icon-large">🚫</div>
+          <div class="server-title">"Please Try Again Later"</div>
+          <div class="server-status text-danger">App Shut Down to Users</div>
+          <div class="bottleneck-tag text-danger">📉 100% User Churn — Customers Uninstalled App</div>
         </div>
       `;
     }
@@ -154,16 +204,18 @@ class SimulationEngine {
     this.container.innerHTML = `
       <div class="sim-stage">
         <div class="sim-header">
-          <span class="sim-badge">Live Scenario: 6:00 PM City Rush</span>
+          <span class="sim-badge">Live Scenario: 6:00 PM City Rush Hour</span>
           <span class="sim-counter">50,000 Active Passengers</span>
         </div>
         <div class="sim-traffic-visual">
           <div class="sim-clients">
-            <div class="client-avatar">📱<span class="user-pulse"></span></div>
-            <div class="client-avatar">📱<span class="user-pulse"></span></div>
-            <div class="client-avatar">📱<span class="user-pulse"></span></div>
-            <div class="client-avatar">📱<span class="user-pulse"></span></div>
-            <div class="client-label">50,000 Passengers Requesting Cabs</div>
+            <div class="clients-grid">
+              <div class="client-avatar">📱<span class="user-pulse"></span></div>
+              <div class="client-avatar">📱<span class="user-pulse"></span></div>
+              <div class="client-avatar">📱<span class="user-pulse"></span></div>
+              <div class="client-avatar">📱<span class="user-pulse"></span></div>
+            </div>
+            <div class="client-label">50,000 Ride Requests</div>
           </div>
           <div class="traffic-pipes ${isHorizontal ? 'pipe-split' : 'pipe-single'}">
             <div class="flow-particle p1"></div>
@@ -175,67 +227,149 @@ class SimulationEngine {
           </div>
         </div>
         <div class="sim-telemetry">
-          <div class="stat-pill"><span>Latency:</span> <strong>${isHorizontal ? '18ms' : (isVertical ? '95ms' : '4,800ms')}</strong></div>
-          <div class="stat-pill"><span>App Health:</span> <strong class="${isHorizontal ? 'text-success' : 'text-danger'}">${isHorizontal ? '100% Smooth' : (isVertical ? 'Strained' : 'Crashing')}</strong></div>
-          <div class="stat-pill"><span>Cabs Matched:</span> <strong>${isHorizontal ? '50,000 / 50,000' : (isVertical ? '35,000 / 50,000' : '4,100 / 50,000')}</strong></div>
+          <div class="stat-pill"><span>Latency:</span> <strong>${isHorizontal ? '18ms (Instant)' : (isVertical ? '140ms (Lagging)' : 'Inf')}</strong></div>
+          <div class="stat-pill"><span>System Health:</span> <strong class="${isHorizontal ? 'text-success' : 'text-danger'}">${isHorizontal ? '100% Healthy' : (isVertical ? 'Near Crash' : 'Offline')}</strong></div>
+          <div class="stat-pill"><span>Trips Dispatched:</span> <strong>${isHorizontal ? '50,000 / 50,000' : (isVertical ? '31,000 / 50,000' : '0')}</strong></div>
         </div>
       </div>
     `;
   }
 
-  // --- LEVEL 2: Pipeline Bottleneck ---
+  // --- LEVEL 2: Restaurant Workflow (Amdahl's Law & Bottlenecks) ---
   renderPipelineBottleneck(level, choice) {
     const isPipelined = choice && choice.id === 'B';
+    const isCookFast = choice && choice.id === 'A';
+    const isWait = choice && choice.id === 'C';
+
+    let queueCountText = '5 customers waiting';
+    let queueClass = 'queue-normal';
+    let queueAvatars = '🚶‍♂️ 🚶‍♀️ 🚶‍♂️';
+
+    if (isCookFast) {
+      queueCountText = '100+ customers waiting in street! (Bottlenecked)';
+      queueClass = 'queue-overwhelmed pulse-danger';
+      queueAvatars = '🚶‍♂️ 🚶‍♀️ 🚶‍♂️ 🚶‍♀️ 😤 ⏳ 😡 🚶‍♂️ 🚶‍♀️';
+    } else if (isPipelined) {
+      queueCountText = '0 customers waiting (Continuous Flow!)';
+      queueClass = 'queue-cleared text-success';
+      queueAvatars = '😋 5★ 👍 🥡 🚗';
+    } else if (isWait) {
+      queueCountText = '0 customers (Everyone walked away to competitor!)';
+      queueClass = 'queue-empty text-danger';
+      queueAvatars = '❌ 🚶‍♂️💨 🚶‍♀️💨';
+    }
+
     this.container.innerHTML = `
       <div class="sim-stage">
         <div class="sim-header">
-          <span class="sim-badge">Restaurant Workflow vs RideQuest Dispatch</span>
-          <span class="sim-counter">${isPipelined ? 'Pipelined Throughput: 4.5x' : 'Single Worker Bottleneck'}</span>
+          <span class="sim-badge">Visual Restaurant Simulation: The 4-Step Workflow</span>
+          <span class="sim-counter font-mono">${isPipelined ? 'Throughput: 4.5x Speedup' : (isCookFast ? 'Cooking Fast, Rest Blocked' : 'Sequential Bottleneck')}</span>
         </div>
-        <div class="pipeline-container">
-          ${isPipelined ? `
-            <div class="pipeline-flow">
-              <div class="pipe-station active">
-                <div class="st-icon">📞</div>
-                <div class="st-name">Worker 1</div>
-                <div class="st-task">Takes Order (20s)</div>
-              </div>
-              <div class="pipe-arrow">➡️</div>
-              <div class="pipe-station active">
-                <div class="st-icon">🍳</div>
-                <div class="st-name">Worker 2</div>
-                <div class="st-task">Cooks Meal (20s)</div>
-              </div>
-              <div class="pipe-arrow">➡️</div>
-              <div class="pipe-station active">
-                <div class="st-icon">📦</div>
-                <div class="st-name">Worker 3</div>
-                <div class="st-task">Packs Box (20s)</div>
-              </div>
-              <div class="pipe-arrow">➡️</div>
-              <div class="pipe-station active">
-                <div class="st-icon">💳</div>
-                <div class="st-name">Worker 4</div>
-                <div class="st-task">Collects Cash (20s)</div>
+
+        <div class="restaurant-visual-container">
+          <!-- CUSTOMER QUEUE AT ENTRANCE -->
+          <div class="restaurant-queue-bar ${queueClass}">
+            <div class="queue-label">
+              <span class="queue-icon">👥</span>
+              <strong>Queue Line:</strong> <span class="queue-status-text">${queueCountText}</span>
+            </div>
+            <div class="queue-avatars-row">${queueAvatars}</div>
+          </div>
+
+          <!-- THE 4 RESTAURANT STATIONS -->
+          <div class="restaurant-stations-grid ${isPipelined ? 'stations-pipelined' : 'stations-single-worker'}">
+            
+            <!-- STATION 1: ORDER -->
+            <div class="station-card ${isPipelined ? 'st-active' : (isCookFast ? 'st-waiting' : '')}">
+              <div class="station-icon">📞</div>
+              <div class="station-title">Step 1: Take Order</div>
+              <div class="station-worker">${isPipelined ? '👨‍💼 Dedicated Worker 1' : '👨‍🍳 Chef Raj'}</div>
+              <div class="station-badge ${isPipelined ? 'badge-ok' : (isCookFast ? 'badge-wait' : 'badge-idle')}">
+                ${isPipelined ? '✓ Active (20s)' : (isCookFast ? '⏳ WAITING (Chef busy)' : 'Sequential')}
               </div>
             </div>
-            <div class="pipeline-summary text-success">
-              ✨ Every worker works simultaneously in parallel! A completed order exits every 20 seconds!
-            </div>
-          ` : `
-            <div class="single-worker-box">
-              <div class="chef-icon pulse-shake">👨‍🍳 Chef Raj</div>
-              <div class="chef-tasks">
-                <span class="task-tag done">📞 Take Order</span>
-                <span class="task-tag current">🍳 Cooking (Fast!)</span>
-                <span class="task-tag pending">📦 Pack Food (Waiting...)</span>
-                <span class="task-tag pending">💳 Collect Money (Blocked!)</span>
-              </div>
-              <div class="bottleneck-warning text-warning">
-                ⚠️ Cooking was sped up, but customers are still waiting in line for packaging and payment!
+
+            <div class="station-arrow">${isPipelined ? '⏩' : '➡️'}</div>
+
+            <!-- STATION 2: COOKING -->
+            <div class="station-card ${isCookFast ? 'st-fast glow-cyan' : (isPipelined ? 'st-active' : '')}">
+              <div class="station-icon">🍳</div>
+              <div class="station-title">Step 2: Cooking</div>
+              <div class="station-worker">${isPipelined ? '👨‍🍳 Chef Raj (Dedicated)' : '👨‍🍳 Chef Raj'}</div>
+              <div class="station-badge ${isCookFast ? 'badge-fast' : (isPipelined ? 'badge-ok' : 'badge-idle')}">
+                ${isCookFast ? '⚡ 10s (FAST!)' : (isPipelined ? '✓ Active (20s)' : 'Takes 2 min')}
               </div>
             </div>
-          `}
+
+            <div class="station-arrow">${isPipelined ? '⏩' : '➡️'}</div>
+
+            <!-- STATION 3: PACKING -->
+            <div class="station-card ${isPipelined ? 'st-active' : (isCookFast ? 'st-waiting' : '')}">
+              <div class="station-icon">📦</div>
+              <div class="station-title">Step 3: Pack Food</div>
+              <div class="station-worker">${isPipelined ? '👩‍💼 Dedicated Worker 3' : '👨‍🍳 Chef Raj'}</div>
+              <div class="station-badge ${isPipelined ? 'badge-ok' : (isCookFast ? 'badge-wait' : 'badge-idle')}">
+                ${isPipelined ? '✓ Active (20s)' : (isCookFast ? '⏳ WAITING (Chef busy)' : 'Sequential')}
+              </div>
+            </div>
+
+            <div class="station-arrow">${isPipelined ? '⏩' : '➡️'}</div>
+
+            <!-- STATION 4: PAYMENT -->
+            <div class="station-card ${isPipelined ? 'st-active' : (isCookFast ? 'st-blocked pulse-danger' : '')}">
+              <div class="station-icon">💳</div>
+              <div class="station-title">Step 4: Cashier Pay</div>
+              <div class="station-worker">${isPipelined ? '🧑‍💼 Dedicated Cashier 4' : '👨‍🍳 Chef Raj'}</div>
+              <div class="station-badge ${isPipelined ? 'badge-ok' : (isCookFast ? 'badge-block' : 'badge-idle')}">
+                ${isPipelined ? '✓ Active (20s)' : (isCookFast ? '🛑 BLOCKED (Bottleneck!)' : 'Sequential')}
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DYNAMIC SIMULATION NARRATIVE BANNER -->
+          <div class="restaurant-live-narrative">
+            ${isCookFast ? `
+              <div class="narrative-box warning-narrative pulse-shake">
+                <span class="narrative-icon">⚠️</span>
+                <div>
+                  <strong>Chef Raj is chopping at lightning speed, but orders and cashier lines are frozen!</strong><br>
+                  <span class="text-muted">Customers cannot pay and cannot get their food because one person is stuck doing 4 sequential jobs.</span>
+                </div>
+              </div>
+            ` : (isPipelined ? `
+              <div class="narrative-box success-narrative glow-green">
+                <span class="narrative-icon">✨</span>
+                <div>
+                  <strong>All 4 stations operate in parallel simultaneously!</strong><br>
+                  <span class="text-muted">As Worker 1 takes an order, Chef Raj cooks the next, Worker 3 packs, and Cashier collects payment. A finished order exits every 20 seconds!</span>
+                </div>
+              </div>
+            ` : (isWait ? `
+              <div class="narrative-box danger-narrative">
+                <span class="narrative-icon">❌</span>
+                <div>
+                  <strong>Customers left the restaurant!</strong><br>
+                  <span class="text-muted">Nobody wants to wait in the heat. Revenue dropped to zero.</span>
+                </div>
+              </div>
+            ` : `
+              <div class="narrative-box neutral-narrative">
+                <span class="narrative-icon">ℹ️</span>
+                <div>
+                  <strong>One person doing everything sequentially:</strong><br>
+                  <span class="text-muted">Chef Raj takes an order ➔ stops to cook ➔ stops to pack ➔ stops to collect cash. Total time per customer: 10 minutes.</span>
+                </div>
+              </div>
+            `))}
+          </div>
+
+        </div>
+
+        <div class="sim-telemetry">
+          <div class="stat-pill"><span>Avg Wait Time:</span> <strong>${isPipelined ? '45 seconds' : (isCookFast ? '42 minutes (Long!)' : '10 minutes')}</strong></div>
+          <div class="stat-pill"><span>Throughput:</span> <strong class="${isPipelined ? 'text-success' : 'text-warning'}">${isPipelined ? '1 order / 20s (4.5x)' : (isCookFast ? '1 order / 8m (1.1x)' : '1 order / 10m')}</strong></div>
+          <div class="stat-pill"><span>Customer Review:</span> <strong>${isPipelined ? '4.9 ⭐ (Delighted)' : (isCookFast ? '1.4 ⭐ (Frustrated)' : '3.0 ⭐')}</strong></div>
         </div>
       </div>
     `;

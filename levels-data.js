@@ -34,7 +34,12 @@ const LEVELS = [
         isOptimal: false,
         consequenceText: "You bought a giant super-server! It runs fast for a short time, but when 100,000 users hit it, it still reaches 100% CPU capacity. It costs a fortune, and if that single machine trips a wire, the ENTIRE city loses RideQuest!",
         resultState: "vertical_overload",
-        statImpact: { latency: "+80ms", capacity: "Limited", cost: "Extremely High", risk: "Single point of failure" }
+        statImpact: { latency: "+80ms", capacity: "Limited", cost: "Extremely High", risk: "Single point of failure" },
+        whatHappened: {
+          helped: "The giant machine handled the initial rush of requests for a few moments.",
+          bottleneck: "When the evening traffic doubled, that single computer still hit 100% CPU! It was extremely expensive, and any single hardware failure will crash the entire platform.",
+          reflectionQuestion: "Can upgrading one single computer scale forever without becoming a dangerous single point of failure?"
+        }
       },
       {
         id: "B",
@@ -42,7 +47,8 @@ const LEVELS = [
         isOptimal: true,
         consequenceText: "Brilliant! You added 4 regular computers. The 50,000 incoming requests are divided evenly. Each machine is cool and comfortable at 30% load, and the app is instantly responsive for every passenger!",
         resultState: "horizontal_success",
-        statImpact: { latency: "18ms", capacity: "Easily Expandable", cost: "Cost-Effective", risk: "Safe & Resilient" }
+        statImpact: { latency: "18ms", capacity: "Easily Expandable", cost: "Cost-Effective", risk: "Safe & Resilient" },
+        successSummary: "By bringing in multiple computers and dividing the crowd's requests, each machine runs comfortably at 25% load with zero bottlenecks!"
       },
       {
         id: "C",
@@ -50,7 +56,12 @@ const LEVELS = [
         isOptimal: false,
         consequenceText: "Your passengers delete RideQuest and switch to walking or rival taxi apps! In tech companies, telling users to 'come back later' causes business bankruptcy.",
         resultState: "user_churn",
-        statImpact: { latency: "Inf", capacity: "Zero", cost: "Loss of Revenue", risk: "Catastrophic" }
+        statImpact: { latency: "Inf", capacity: "Zero", cost: "Loss of Revenue", risk: "Catastrophic" },
+        whatHappened: {
+          helped: "The servers had zero traffic because no one was allowed inside.",
+          bottleneck: "Passengers deleted the app in frustration and switched to rival apps. RideQuest lost 100% of its business!",
+          reflectionQuestion: "Is turning paying customers away a sustainable technology strategy?"
+        }
       }
     ],
     discovery: {
@@ -86,19 +97,38 @@ const LEVELS = [
     choices: [
       {
         id: "A",
-        text: "Send Chef Raj to culinary boot camp so he cooks in 10 seconds instead of 2 minutes.",
+        text: "Make Chef Raj cook faster (send him to culinary boot camp).",
         isOptimal: false,
         consequenceText: "Chef Raj now chops onions in 10 seconds, but 20 customers are still trapped at the cashier counter waiting to pay! Total wait time barely improved.",
         resultState: "bottleneck_remains",
-        statImpact: { speedup: "Negligible (1.1x)", satisfaction: "Low", bottleneck: "Cashier still blocked" }
+        statImpact: { speedup: "Negligible (1.1x)", satisfaction: "Low", bottleneck: "Cashier still blocked" },
+        whatHappened: {
+          helped: "Cooking speed became 10x faster (2 minutes ➔ 20 seconds).",
+          bottleneck: "Chef Raj still had to take phone orders, pack boxes, and collect cash alone. Those sequential steps stayed slow, and the customer queue grew longer and longer!",
+          reflectionQuestion: "Did speeding up the cooking step alone solve the whole restaurant's waiting line?"
+        }
       },
       {
         id: "B",
-        text: "Break the job into separate roles: One person takes orders, one cooks, one packs, and one takes payments.",
+        text: "Divide the work between multiple people: One takes orders, one cooks, one packs, one takes payments.",
         isOptimal: true,
         consequenceText: "Outstanding! By identifying the true bottleneck and separating tasks into an organized pipeline, orders move continuously without anyone waiting for the other!",
         resultState: "pipeline_success",
-        statImpact: { speedup: "Massive (4.5x)", satisfaction: "Very High", bottleneck: "Eliminated" }
+        statImpact: { speedup: "Massive (4.5x)", satisfaction: "Very High", bottleneck: "Eliminated" },
+        successSummary: "By dividing the work into separate stations (Order, Cook, Pack, Pay), all 4 workers operate in parallel and orders flow without delay!"
+      },
+      {
+        id: "C",
+        text: "Ask customers to wait outside in the street until Chef Raj catches up.",
+        isOptimal: false,
+        consequenceText: "Angry customers wait in the heat, get fed up, and walk to the restaurant across the street! Orders drop to zero.",
+        resultState: "customers_leave",
+        statImpact: { speedup: "Zero", satisfaction: "Abysmal", bottleneck: "Customers left" },
+        whatHappened: {
+          helped: "Chef Raj was not rushed in the kitchen.",
+          bottleneck: "Customers got tired of waiting outside in the hot sun and walked across the street to a competitor. Revenue plummeted!",
+          reflectionQuestion: "Can asking customers to wait indefinitely fix a slow service bottleneck?"
+        }
       }
     ],
     discovery: {
@@ -1198,5 +1228,56 @@ const LEVELS = [
   }
 ];
 
+const TOPIC_HINTS = {
+  1: "Handling Sudden Crowd Surges",
+  2: "Finding the System Bottleneck",
+  3: "Distributing Incoming Traffic",
+  4: "Dealing with Network Partitions",
+  5: "Guaranteeing Safe Payments",
+  6: "Remembering Frequent Answers",
+  7: "Searching Without Scanning Everything",
+  8: "Separating Conflicting Workloads",
+  9: "Dividing an Enormous Database",
+  10: "Surviving Hardware Crashes",
+  11: "Coordinating Independent Services",
+  12: "Containing System Failures",
+  13: "Resolving Conflicting Event Order",
+  14: "Connecting Mobile Apps to Backend",
+  15: "Shielding from Request Floods",
+  16: "Live Two-Way Map Communication",
+  17: "Buffering Traffic Spikes Safely",
+  18: "Analyzing Live Moving Telemetry",
+  19: "Searching Instant Landmark Names",
+  20: "Analyzing Long-Term Business Data",
+  21: "Serving Distant Geographic Cities",
+  22: "Matching the Best Driver Intelligently",
+  23: "Investigating Hidden Service Crashes",
+  24: "Defending Against Rogue Actions",
+  25: "Synthesizing the Complete Architecture"
+};
+
+LEVELS.forEach(lvl => {
+  if (TOPIC_HINTS[lvl.id]) {
+    lvl.topicHint = TOPIC_HINTS[lvl.id];
+  }
+  if (lvl.choices) {
+    lvl.choices.forEach(ch => {
+      if (!ch.whatHappened) {
+        if (!ch.isOptimal) {
+          ch.whatHappened = {
+            helped: "You attempted a direct change to this part of the system.",
+            bottleneck: ch.consequenceText,
+            reflectionQuestion: "Did this approach solve the underlying system bottleneck or make another problem appear?",
+            hint: "Look at where requests or people are getting stuck, and consider how to divide, buffer, or isolate the work."
+          };
+        } else {
+          ch.successSummary = ch.consequenceText;
+        }
+      }
+    });
+  }
+});
+
 window.GAME_STAGES = STAGES;
 window.GAME_LEVELS = LEVELS;
+

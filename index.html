@@ -116,11 +116,13 @@
         <!-- Status Bar -->
         <div class="gameplay-status-bar">
           <div class="status-left">
-            <span class="stage-pill" id="stage-badge-text">Stage 1: Make The App Work</span>
-            <span class="level-pill" id="level-indicator-text">Level 1 of 24</span>
+            <span class="stage-pill" id="stage-badge-text">STAGE 1: MAKE THE APP WORK</span>
+            <span class="level-pill" id="level-indicator-text">Level 1 / 24</span>
+            <div class="stage-stepper" id="stage-stepper-dots"></div>
+            <span class="challenge-topic-pill" id="challenge-topic-text">🎯 Challenge: Handling Sudden Crowd Surges</span>
           </div>
           <div class="status-right">
-            <span class="xp-badge" id="xp-display">0 XP</span>
+            <div class="xp-badge" id="xp-display">⚡ <span id="xp-count-val">0</span> XP</div>
           </div>
         </div>
 
@@ -128,13 +130,62 @@
         <div id="level-standard-view">
           <div class="level-split-grid">
             
-            <!-- LEFT: SIMULATION VIEWPORT -->
-            <div class="sim-viewport-card" id="sim-viewport">
-              <!-- Live interactive simulation is dynamically rendered here -->
+            <!-- LEFT: SIMULATION VIEWPORT & CONSEQUENCE FEEDBACK -->
+            <div class="sim-column">
+              <div class="sim-viewport-card" id="sim-viewport">
+                <!-- Live interactive simulation is dynamically rendered here -->
+              </div>
+
+              <!-- Consequence Feedback Card (shown when suboptimal choice tested) -->
+              <div class="consequence-feedback-card hidden" id="consequence-feedback-card">
+                <div class="consequence-header">
+                  <span class="consequence-icon" id="consequence-icon">⚠️</span>
+                  <div class="consequence-header-text">
+                    <span class="consequence-badge">Observation & Consequence</span>
+                    <h3 class="consequence-title" id="consequence-title">Interesting choice! Let's see what happened...</h3>
+                  </div>
+                </div>
+                <div class="consequence-body" id="consequence-body">
+                  Did making Chef Raj faster solve the whole problem?
+                </div>
+                <div class="consequence-actions">
+                  <button class="btn-retry" id="btn-consequence-retry" onclick="window.game.retryLevel()">
+                    🔄 TRY ANOTHER APPROACH
+                  </button>
+                  <button class="btn-what-happened" id="btn-consequence-explain" onclick="window.game.showWhatHappened()">
+                    💡 WHAT HAPPENED?
+                  </button>
+                </div>
+              </div>
+
+              <!-- Success Feedback Banner (shown when optimal choice tested) -->
+              <div class="success-feedback-banner hidden" id="success-feedback-banner">
+                <div class="success-banner-content">
+                  <span class="success-icon">✨</span>
+                  <div>
+                    <h3 class="success-title">Look what changed!</h3>
+                    <p class="success-desc" id="success-desc-text">The workload is flowing smoothly across the system without bottlenecks!</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- RIGHT: SITUATION, PROBLEM & CHOICES -->
+            <!-- RIGHT: CHARACTER, SITUATION, PROBLEM & CHOICES -->
             <div class="problem-card">
+              
+              <!-- Architect Companion Character Card -->
+              <div class="architect-companion-card" id="architect-companion">
+                <div class="companion-avatar" id="companion-avatar">
+                  <div class="avatar-face" id="avatar-face">🧐</div>
+                </div>
+                <div class="companion-speech-bubble">
+                  <div class="companion-name">Aria • Lead Architect</div>
+                  <div class="companion-text" id="companion-text">
+                    “Thousands of people just opened the app. One machine cannot handle everyone. What should we do?”
+                  </div>
+                </div>
+              </div>
+
               <div class="time-header">
                 <span class="time-tag">⏰ <span id="lvl-time">6:00 PM Rush Hour</span></span>
                 <span class="users-tag">👥 <span id="lvl-users">50,000 users</span></span>
@@ -170,14 +221,54 @@
       </div>
     </section>
 
-    <!-- DISCOVERY MODAL (Reveals after a decision) -->
+    <!-- WHAT HAPPENED DEBRIEF MODAL -->
+    <div class="what-happened-modal-backdrop hidden" id="what-happened-modal">
+      <div class="what-happened-dialog">
+        <div class="wh-header">
+          <div class="wh-icon-badge">💡</div>
+          <div>
+            <div class="wh-subtitle">System Observation</div>
+            <h3 class="wh-title">Architectural Debrief</h3>
+          </div>
+          <button class="close-modal-btn" onclick="window.game.hideWhatHappenedModal()">✕</button>
+        </div>
+
+        <div class="wh-choice-echo" id="wh-choice-echo">
+          You tested: "Make Chef Raj cook faster"
+        </div>
+
+        <div class="wh-breakdown-grid">
+          <div class="wh-box wh-helped">
+            <div class="wh-label text-success">✓ What Improved:</div>
+            <div class="wh-text" id="wh-helped-text">Cooking speed became 10x faster.</div>
+          </div>
+          <div class="wh-box wh-bottleneck">
+            <div class="wh-label text-warning">⚠️ The Bottleneck:</div>
+            <div class="wh-text" id="wh-bottleneck-text">Taking orders, packing food, and payment were still handled by one person! Customers remained trapped in line.</div>
+          </div>
+        </div>
+
+        <div class="wh-reflection-prompt" id="wh-reflection-prompt">
+          💡 <strong>Architect's Reflection:</strong> Did speeding up one step solve a system where other steps remain sequential?
+        </div>
+
+        <div class="wh-footer">
+          <button class="btn-primary" onclick="window.game.retryLevel()">
+            🔄 LET'S TRY AGAIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DISCOVERY MODAL (Reveals after correct decision) -->
     <div class="discovery-modal-backdrop hidden" id="discovery-modal">
       <div class="discovery-dialog">
         <div class="disc-celebration">
-          <span>🎉</span> <span>You just discovered a System Design concept!</span>
+          <span>✨</span> <span>CONCEPT DISCOVERED</span> <span>✨</span>
         </div>
 
         <h2 class="disc-badge-title" id="disc-badge-title">Horizontal Scaling</h2>
+        <div class="disc-subheading">“You didn't memorize it. You experienced why it is needed.”</div>
         <div class="disc-tagline" id="disc-tagline">Instead of depending on one powerful machine, we add more machines and share the work.</div>
 
         <div class="disc-analogy-box">
@@ -208,7 +299,7 @@
 
         <div class="disc-footer">
           <button class="btn-next-level" id="btn-next-level" onclick="window.game.nextLevel()">
-            NEXT CHALLENGE ➔
+            I UNDERSTAND → CONTINUE ➔
           </button>
         </div>
       </div>
