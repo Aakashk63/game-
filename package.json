@@ -4,7 +4,6 @@
   "description": "RideQuest - Become the Architect: An interactive educational system design game for first-year computer science students",
   "main": "server.js",
   "scripts": {
-    "build": "echo 'Static build ready'",
     "start": "node server.js"
   },
   "keywords": [
